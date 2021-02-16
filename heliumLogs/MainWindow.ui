@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>938</width>
-    <height>706</height>
+    <width>965</width>
+    <height>727</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,22 +15,20 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
+    <item row="1" column="0">
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="4" column="1">
-       <widget class="QPushButton" name="button_Save">
-        <property name="font">
-         <font>
-          <pointsize>14</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Save</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1" alignment="Qt::AlignHCenter">
        <widget class="QPushButton" name="button_Run">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>100</width>
@@ -53,17 +51,26 @@
         <property name="text">
          <string>Run</string>
         </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="Line" name="line">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" alignment="Qt::AlignHCenter">
+      <item row="3" column="1" alignment="Qt::AlignHCenter">
        <widget class="QPushButton" name="button_Solve">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>75</width>
@@ -86,7 +93,7 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
+      <item row="6" column="1">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -101,6 +108,9 @@
       </item>
       <item row="1" column="1" alignment="Qt::AlignHCenter">
        <widget class="QPushButton" name="button_Stop">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>75</width>
@@ -123,7 +133,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0" rowspan="6">
+      <item row="0" column="0" rowspan="7">
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
          <number>0</number>
@@ -136,31 +146,39 @@
           <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="8" column="0" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="pushButton_4">
+             <widget class="QPushButton" name="button_press2_clear">
               <property name="text">
                <string>Clear</string>
               </property>
              </widget>
             </item>
             <item row="8" column="1" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="pushButton_6">
+             <widget class="QPushButton" name="button_press2_add">
               <property name="text">
                <string>Add</string>
               </property>
              </widget>
             </item>
             <item row="8" column="3" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="pushButton_7">
+             <widget class="QPushButton" name="button_level_clear">
               <property name="text">
                <string>Clear</string>
               </property>
              </widget>
             </item>
             <item row="3" column="0" colspan="2">
-             <widget class="QPlainTextEdit" name="text_press_1"/>
+             <widget class="QPlainTextEdit" name="edit_press1">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item row="7" column="3" colspan="2">
-             <widget class="QPlainTextEdit" name="text_level"/>
+             <widget class="QPlainTextEdit" name="edit_level">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item row="0" column="0" colspan="5" alignment="Qt::AlignHCenter">
              <widget class="QLabel" name="label">
@@ -183,14 +201,14 @@
              </widget>
             </item>
             <item row="4" column="1" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="pushButton_3">
+             <widget class="QPushButton" name="button_press1_add">
               <property name="text">
                <string>Add</string>
               </property>
              </widget>
             </item>
             <item row="4" column="0" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="button_press1_clear">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -203,14 +221,14 @@
              </widget>
             </item>
             <item row="4" column="3" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="pushButton_2">
+             <widget class="QPushButton" name="button_temp_clear">
               <property name="text">
                <string>Clear</string>
               </property>
              </widget>
             </item>
             <item row="8" column="4" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="pushButton_8">
+             <widget class="QPushButton" name="button_level_add">
               <property name="text">
                <string>Add</string>
               </property>
@@ -253,7 +271,11 @@
              </widget>
             </item>
             <item row="7" column="0" colspan="2">
-             <widget class="QPlainTextEdit" name="text_press_2"/>
+             <widget class="QPlainTextEdit" name="edit_press2">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item row="2" column="3" colspan="2" alignment="Qt::AlignHCenter">
              <widget class="QLabel" name="label_3">
@@ -268,7 +290,7 @@
              </widget>
             </item>
             <item row="4" column="4" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="pushButton_5">
+             <widget class="QPushButton" name="button_temp_add">
               <property name="text">
                <string>Add</string>
               </property>
@@ -287,17 +309,21 @@
              </widget>
             </item>
             <item row="11" column="0" colspan="2">
-             <widget class="QPlainTextEdit" name="text_press_3"/>
+             <widget class="QPlainTextEdit" name="edit_press3">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item row="12" column="0" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="pushButton_9">
+             <widget class="QPushButton" name="button_press3_clear">
               <property name="text">
                <string>Clear</string>
               </property>
              </widget>
             </item>
             <item row="12" column="1" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="pushButton_10">
+             <widget class="QPushButton" name="button_press3_add">
               <property name="text">
                <string>Add</string>
               </property>
@@ -346,7 +372,35 @@
              </widget>
             </item>
             <item row="3" column="3" colspan="2">
-             <widget class="QPlainTextEdit" name="text_temp"/>
+             <widget class="QPlainTextEdit" name="edit_temp">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="3" rowspan="3" colspan="2">
+             <widget class="QPlainTextEdit" name="plainTextEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="plainText">
+               <string>Руководство
+
+1. Заполните список файлов для обработки в соответсвующих разделах при помощи кнопок &quot;Add&quot;
+2. После заполнения всех разделов станут доступны основные функции программы
+3. &quot;Run&quot; запускает непрерывную периодическую обработку указанных файлов
+4. &quot;Stop&quot; останавливает непрерывную обработку файлов
+5. &quot;Solve&quot; - однократная обработка файлов
+6. &quot;Save&quot; - сохранение таблицы с результатом
+7. Для очистки соответсвующего списка используется кнопка &quot;Clear&quot; </string>
+              </property>
+              <property name="overwriteMode">
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -363,21 +417,69 @@
          <attribute name="title">
           <string>Result Table</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="edit_save">
+              <property name="font">
+               <font>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QTableView" name="table_result"/>
+            </item>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="button_Save">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Save</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tab_press">
          <attribute name="title">
           <string>Pressure</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QGraphicsView" name="graphicsView"/>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tab_temp">
          <attribute name="title">
           <string>Temperature</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QGraphicsView" name="graphicsView_2"/>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tab_level">
          <attribute name="title">
           <string>Level</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0">
+           <widget class="QGraphicsView" name="graphicsView_3"/>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tab_log">
          <attribute name="title">
@@ -387,7 +489,11 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-             <widget class="QPlainTextEdit" name="text_log"/>
+             <widget class="QPlainTextEdit" name="editLog">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -395,14 +501,14 @@
         </widget>
        </widget>
       </item>
+      <item row="2" column="1">
+       <widget class="Line" name="line_9">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
      </layout>
-    </item>
-    <item row="1" column="0">
-     <widget class="QProgressBar" name="progressBar">
-      <property name="value">
-       <number>0</number>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>
@@ -411,7 +517,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>938</width>
+     <width>965</width>
      <height>21</height>
     </rect>
    </property>

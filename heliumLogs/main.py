@@ -17,6 +17,70 @@ from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import (QMainWindow, QTableWidgetItem,
     QFileDialog, QApplication, QComboBox, QLabel)
 
+""" функция склеивания даты и времени"""
+def dateConcat(df):
+    dataframe = df
+    dataframe["Date/Time"] = pd.to_datetime(dataframe['Date'] + " " + dataframe['Time'],
+                                 format = '%d.%m.%Y %H:%M:%S', 
+                                 exact = False)
+    dataframe.drop(['Time', 'Date'], axis=1, inplace=True)
+    return dataframe
+
+""" Класс Лог Давления"""
+class Pressure():
+    def __init__(self, fnames = ''):
+        if fnames == '':
+            self.fnames = []
+        else:
+            self.fnames = fnames
+            
+    def set_fnames(self):
+        fname = QFileDialog.getOpenFileName(filter = 'Text Files (*.txt)')[0]
+        if fname != '':
+            self.fnames = [fname]
+        else:
+            self.fnames = []
+            
+    def GetFNames(self):
+        return self.fnames
+    
+    def ClearFNames(self):
+        self.fnames = []
+        return 0
+    
+    def AddFName(self):
+        fname = QFileDialog.getOpenFileName(filter = 'Text Files (*.txt)')[0]
+        if fname != '':
+            self.fnames.append(fname)
+    
+    def GetDataFrame(self):
+        while self.fnames == [] or self.fnames == '':
+            self.set_fnames()
+        
+        
+        names = ["Addr", "Command", "Pressure", "Time", "Date"]
+        result = pd.DataFrame()
+        parser_cond = {"Addr" : "Addr:", "Command" : "Command: ", "Pressure" : "Pressure: ", 
+                   "Time" : "Time: ", "Date" : "Date: "}
+        for filename in self.fnames:
+            try:
+                dataframe = pd.read_csv(filename, skiprows = 2, header=None, delimiter=';', names=names)
+                for name, parse in parser_cond.items():
+                    dataframe[name] = dataframe[name].map(lambda x: x.lstrip(parse).rstrip(" kPa"))
+
+                dataframe = dateConcat(dataframe)
+                oldname = "Pressure"
+                newname = 'Pressure' + "_" + dataframe["Addr"][0] + ", kPa"
+                dataframe.rename(columns={oldname : newname}, inplace=True)
+                dataframe[newname] = dataframe[newname].map(lambda x: float(x.replace(',','.')))
+                dataframe.drop(['Addr', 'Command'], axis=1, inplace=True)
+                result = result.append(dataframe, ignore_index = True)          
+            except:
+                pass
+        
+        return result
+    
+""" Класс Главное Окно"""
 class MainWindow(QMainWindow):
 
     def __init__(self):
@@ -24,9 +88,10 @@ class MainWindow(QMainWindow):
         uic.loadUi("MainWindow.ui", self)
         self.initUI()
         # создание полей класса
-        self.list_press1 = []
-        self.list_press2 = []
-        self.list_press3 = []
+        self.Result_Table = pd.DataFrame()
+        self.log_press1 = Pressure()
+        self.log_press2 = Pressure()
+        self.log_press3 = Pressure()
         self.list_temp = []
         self.list_level = []
         
@@ -81,9 +146,24 @@ class MainWindow(QMainWindow):
     
     def save_clicked(self):
         self.button_Run.setChecked(False)
+        fname = QFileDialog.getSaveFileName(self, 'Save File', filter='Excel files (*.xlsx)')[0]
+        if '.xlsx' not in fname:
+            fname = fname + '.xlsx'
+        self.edit_result.setText('Saved: ' + fname)
+        
+        if (fname[0] != '.'):
+            self.union.to_excel(fname)
         self.__Log('button_save.clicked')
         
-    
+    def FillTable(self, Result_Table, tableWidget):
+        col_count = len(Result_Table.columns)
+        row_count = len(Result_Table.index)
+        tableWidget.setColumnCount(col_count)
+        tableWidget.setRowCount(row_count)
+        tableWidget.setHorizontalHeaderLabels(Result_Table.columns)
+        for i in range(row_count):
+            for j in range(col_count):
+                tableWidget.setItem(i,j, QTableWidgetItem(str(Result_Table.iat[i, j])))
     
     # execData - main function
     def execData(self):
@@ -91,9 +171,34 @@ class MainWindow(QMainWindow):
         """
         logic
         """
-        self.__Log('button_Run.isChecked')
+        p1 = self.log_press1.GetDataFrame()
+        self.progressBar.setValue(10)
+        p2 = self.log_press2.GetDataFrame()
+        self.progressBar.setValue(20)
+        p3 = self.log_press3.GetDataFrame()
+        self.progressBar.setValue(30)
+        p1p2 = pd.merge(p1, p2, on="Date/Time", how="outer")
+        self.progressBar.setValue(40)
+        p = pd.merge(p1p2, p3, on="Date/Time", how="outer")
+        self.progressBar.setValue(50)
+   
+        self.union = p
+        cols = self.union.columns.tolist()
+        cols = cols[1:2]+cols[:1]+cols[2:]
+        self.union = self.union[cols]
+        self.union.sort_values('Date/Time', inplace = True)
+        self.__Log(str(len(self.union)))
+        self.progressBar.setValue(70)
+        
+        if len(self.union) > 0:
+            self.button_Save.setEnabled(True)
+            self.FillTable(self.union, self.table_result)
+        else:
+            self.button_Save.setEnabled(False)
+        
         self.progressBar.setValue(100)
-        # Setup a timer to trigger the redraw by calling update_plot.
+        
+        # Setup a timer to trigger runbutton.
         self.timer = QtCore.QTimer()
         timeout = 2
         self.timer.setInterval(timeout*1000)
@@ -102,20 +207,20 @@ class MainWindow(QMainWindow):
     
     # слоты кнопок 'Add'
     def press1_add(self):
-        self.list_press1.append('bonk')
-        self.fill_edit(self.edit_press1, *self.list_press1)
+        self.log_press1.AddFName()
+        self.fill_edit(self.edit_press1, *self.log_press1.GetFNames())
         self.accessRun()
         self.__Log('press1_add.clicked')
         
     def press2_add(self):
-        self.list_press2.append('bonk')
-        self.fill_edit(self.edit_press2, *self.list_press2)
+        self.log_press2.AddFName()
+        self.fill_edit(self.edit_press2, *self.log_press2.GetFNames())
         self.accessRun()
         self.__Log('press2_add.clicked')
         
     def press3_add(self):
-        self.list_press3.append('bonk')
-        self.fill_edit(self.edit_press3, *self.list_press3)
+        self.log_press3.AddFName()
+        self.fill_edit(self.edit_press3, *self.log_press3.GetFNames())
         self.accessRun()
         self.__Log('press3_add.clicked')
         
@@ -133,20 +238,20 @@ class MainWindow(QMainWindow):
     
     # слоты кнопок 'Clear'
     def press1_clear(self):
-        self.list_press1 = []
-        self.fill_edit(self.edit_press1, *self.list_press1)
+        self.log_press1.ClearFNames()
+        self.fill_edit(self.edit_press1, *self.log_press1.GetFNames())
         self.accessRun()
         self.__Log('press1_clear.clicked')
         
     def press2_clear(self):
-        self.list_press2 = []
-        self.fill_edit(self.edit_press2, *self.list_press2)
+        self.log_press2.ClearFNames()
+        self.fill_edit(self.edit_press2, *self.log_press2.GetFNames())
         self.accessRun()
         self.__Log('press2_clear.clicked')
         
     def press3_clear(self):
-        self.list_press3 = []
-        self.fill_edit(self.edit_press3, *self.list_press3)
+        self.log_press3.ClearFNames()
+        self.fill_edit(self.edit_press3, *self.log_press3.GetFNames())
         self.accessRun()
         self.__Log('press3_clear.clicked')
         
@@ -166,9 +271,9 @@ class MainWindow(QMainWindow):
 
     # проверка готовности к запуску    
     def accessRun(self):
-        a = self.list_press1 != []
-        b = self.list_press2 != []
-        c = self.list_press3 != []
+        a = self.log_press1.GetFNames() != []
+        b = self.log_press2.GetFNames() != []
+        c = self.log_press3.GetFNames() != []
         d = self.list_temp != []
         e = self.list_level != []
         if a and b and c and d and e:

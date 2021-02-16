@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Created on Sun 15:59:08 2020
+Created on Feb 15, 2021
 
-@author: Witcher
+@author: MrMeowlnir
 
-Real-time analysis with GUI
+Create full database of experimental data with GUI
 """
 
 import sys

@@ -270,7 +270,13 @@ class MainWindow(QMainWindow):
         self.union = self.union[cols]
         self.union.sort_values('Date/Time', inplace = True)
         self.progressBar.setValue(70)
-        
+        """
+        TODO:
+            Fill graphics
+            1. Pressure
+            2. Temperature
+            3. Level
+        """
         if len(self.union) > 0:
             self.button_Save.setEnabled(True)
             model = PandasModel(self.union)

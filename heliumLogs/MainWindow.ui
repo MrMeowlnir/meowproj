@@ -136,7 +136,7 @@
       <item row="0" column="0" rowspan="7">
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_path">
          <attribute name="title">
@@ -448,7 +448,7 @@
              </widget>
             </item>
             <item row="1" column="0" colspan="2">
-             <widget class="QTableWidget" name="table_result"/>
+             <widget class="QTableView" name="table_result"/>
             </item>
            </layout>
           </item>

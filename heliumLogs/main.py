@@ -27,6 +27,13 @@ def dateConcat(df):
     return dataframe
 
 
+def fpress(x):
+    if 'MPa' in x:
+        return np.round(1000*float(x.rstrip(' MPa')), 3)
+    elif 'kPa' in x:
+        return np.round(float(x.rstrip(' kPa')), 3)
+    return 0
+
 class PandasModel(QtCore.QAbstractTableModel):
     """
     Class to populate a table view with a pandas dataframe
@@ -96,14 +103,16 @@ class Pressure(LogFile):
         for filename in self.fnames:
             try:
                 dataframe = pd.read_csv(filename, skiprows = 2, header=None, delimiter=';', names=names)
+                
                 for name, parse in parser_cond.items():
-                    dataframe[name] = dataframe[name].map(lambda x: x.lstrip(parse).rstrip(" kPa"))
+                    dataframe[name] = dataframe[name].map(lambda x: x.lstrip(parse))
 
                 dataframe = dateConcat(dataframe)
                 oldname = "Pressure"
                 newname = 'Pressure' + "_" + dataframe["Addr"][0] + ", kPa"
                 dataframe.rename(columns={oldname : newname}, inplace=True)
-                dataframe[newname] = dataframe[newname].map(lambda x: float(x.replace(',','.')))
+                dataframe[newname] = dataframe[newname].map(lambda x: x.replace(',','.'))
+                dataframe[newname] = dataframe[newname].map(lambda x: fpress(x))
                 dataframe.drop(['Addr', 'Command'], axis=1, inplace=True)
                 result = result.append(dataframe, ignore_index = True)          
             except:
@@ -121,12 +130,14 @@ class Temperature(LogFile):
             self.set_fnames()
         
         
-        names = ["T1, K", "T2, K", "T3, K", "T4, K", "T5, K", "T6, K", "T7, K","T8, K","Date", "Time"]
+        names = ["Date/Time", "T1, K", "T2, K", "T3, K", "T4, K", "T5, K", "T6, K", "T7, K","T8, K"]
         result = pd.DataFrame()
         for filename in self.fnames:
             try:
                 dataframe = pd.read_csv(filename, delimiter='\t', names=names)
-                dataframe = dateConcat(dataframe)
+                dataframe["Date/Time"] = pd.to_datetime(dataframe["Date/Time"],
+                                 format = '%d.%m.%Y %H:%M:%S', 
+                                 exact = False)
                 result = result.append(dataframe, ignore_index = True)          
             except:
                 pass
@@ -143,13 +154,15 @@ class Level(LogFile):
         while self.fnames == [] or self.fnames == '':
             self.set_fnames()
         
-        names = ["Level, cm", "Date", "Time"]
+        names = ["Date/Time", "Level, cm"]
         result = pd.DataFrame()
         for filename in self.fnames:
             try:
                 dataframe = pd.read_csv(filename, delimiter='\t', names=names)
-                dataframe["Level, cm"] = dataframe["Level, cm"].map(lambda x: float(x.rstrip(" cm")))
-                dataframe = dateConcat(dataframe)
+                dataframe["Level, cm"] = dataframe["Level, cm"].map(lambda x: float(x.rstrip(" cm").replace(',','.')))
+                dataframe["Date/Time"] = pd.to_datetime(dataframe["Date/Time"],
+                                 format = '%d.%m.%Y  %H:%M:%S', 
+                                 exact = False)
                 result = result.append(dataframe, ignore_index = True)          
             except:
                 pass
@@ -248,14 +261,19 @@ class MainWindow(QMainWindow):
         logic
         """
         p1 = self.log_press1.GetDataFrame()
+        self.__Log('len(p1) = ' + str(len(p1)))
         self.progressBar.setValue(10)
         p2 = self.log_press2.GetDataFrame()
+        self.__Log('len(p2) = ' + str(len(p2)))
         self.progressBar.setValue(20)
         p3 = self.log_press3.GetDataFrame()
+        self.__Log('len(p3) = ' + str(len(p3)))
         self.progressBar.setValue(30)
         t = self.log_temp.GetDataFrame()
+        self.__Log('len(t) = ' + str(len(t)))
         self.progressBar.setValue(35)
         l = self.log_level.GetDataFrame()
+        self.__Log('len(l) = ' + str(len(l)))
         self.progressBar.setValue(40)
         p1p2 = pd.merge(p1, p2, on="Date/Time", how="outer")
         self.progressBar.setValue(45)

@@ -145,42 +145,214 @@
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="8" column="0" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="button_press2_clear">
-              <property name="text">
-               <string>Clear</string>
+            <item row="7" column="0" colspan="3">
+             <widget class="QPlainTextEdit" name="edit_press2">
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="8" column="1" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="button_press2_add">
+            <item row="2" column="4" colspan="3" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="label_3">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Температура 1 (холодный блок)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="6">
+             <widget class="QPushButton" name="button_temp_add">
               <property name="text">
                <string>Add</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="3" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="button_level_clear">
+            <item row="6" column="0" colspan="3" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="label_4">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="text">
-               <string>Clear</string>
+               <string>Давление 2</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0" colspan="2">
+            <item row="2" column="0" colspan="3" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="label_2">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Давление 1</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0" colspan="3" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="label_5">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Давление 3</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" colspan="3">
              <widget class="QPlainTextEdit" name="edit_press1">
               <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="7" column="3" colspan="2">
+            <item row="11" column="4" colspan="3">
              <widget class="QPlainTextEdit" name="edit_level">
               <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="0" column="0" colspan="5" alignment="Qt::AlignHCenter">
+            <item row="8" column="0">
+             <widget class="QPushButton" name="button_press2_clear">
+              <property name="text">
+               <string>Clear</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="3" rowspan="3">
+             <widget class="Line" name="line_8">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="4" colspan="3">
+             <widget class="QPlainTextEdit" name="edit_temp">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="4" colspan="3" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="label_6">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Уровень</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0" colspan="3">
+             <widget class="QPlainTextEdit" name="edit_press3">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="0">
+             <widget class="QPushButton" name="button_press3_clear">
+              <property name="text">
+               <string>Clear</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="2">
+             <widget class="QPushButton" name="button_press3_add">
+              <property name="text">
+               <string>Add File</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="7">
+             <widget class="Line" name="line_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" colspan="7">
+             <widget class="Line" name="line_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="3" rowspan="3">
+             <widget class="Line" name="line_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0" colspan="7">
+             <widget class="Line" name="line_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3" rowspan="3">
+             <widget class="Line" name="line_7">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="2">
+             <widget class="QPushButton" name="button_press2_add">
+              <property name="text">
+               <string>Add File</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="5">
+             <widget class="QPushButton" name="button_temp_addfolder">
+              <property name="text">
+               <string>Add Folder</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="4" colspan="3" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Температура 2 (ротаметр)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="QPushButton" name="button_press2_addfolder">
+              <property name="text">
+               <string>Add Folder</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="1">
+             <widget class="QPushButton" name="button_press3_addfolder">
+              <property name="text">
+               <string>Add Folder</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QPushButton" name="button_press1_addfolder">
+              <property name="text">
+               <string>Add Folder</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="7" alignment="Qt::AlignHCenter">
              <widget class="QLabel" name="label">
               <property name="maximumSize">
                <size>
@@ -200,14 +372,14 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="1" alignment="Qt::AlignRight">
+            <item row="4" column="2">
              <widget class="QPushButton" name="button_press1_add">
               <property name="text">
-               <string>Add</string>
+               <string>Add File</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="0" alignment="Qt::AlignLeft">
+            <item row="4" column="0">
              <widget class="QPushButton" name="button_press1_clear">
               <property name="maximumSize">
                <size>
@@ -220,191 +392,85 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="3" alignment="Qt::AlignLeft">
+            <item row="4" column="4">
              <widget class="QPushButton" name="button_temp_clear">
               <property name="text">
                <string>Clear</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="4" alignment="Qt::AlignRight">
+            <item row="12" column="4">
+             <widget class="QPushButton" name="button_level_clear">
+              <property name="text">
+               <string>Clear</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Атмосферное давление</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="5">
+             <widget class="QPushButton" name="button_temp2_addfolder">
+              <property name="text">
+               <string>Add Folder</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="4">
+             <widget class="QPushButton" name="button_temp2_clear">
+              <property name="text">
+               <string>Clear</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="6">
+             <widget class="QPushButton" name="button_temp2_add">
+              <property name="text">
+               <string>Add</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="5">
+             <widget class="QPushButton" name="button_level_addfolder">
+              <property name="text">
+               <string>Add Folder</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="6">
              <widget class="QPushButton" name="button_level_add">
               <property name="text">
                <string>Add</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="0" colspan="2" alignment="Qt::AlignHCenter">
-             <widget class="QLabel" name="label_4">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Давление 2</string>
-              </property>
-             </widget>
+            <item row="7" column="4" colspan="3">
+             <widget class="QPlainTextEdit" name="edit_temp2"/>
             </item>
-            <item row="2" column="0" colspan="2" alignment="Qt::AlignHCenter">
-             <widget class="QLabel" name="label_2">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Давление 1</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="0" colspan="2" alignment="Qt::AlignHCenter">
-             <widget class="QLabel" name="label_5">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Давление 3</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0" colspan="2">
-             <widget class="QPlainTextEdit" name="edit_press2">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3" colspan="2" alignment="Qt::AlignHCenter">
-             <widget class="QLabel" name="label_3">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Температура</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="4" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="button_temp_add">
-              <property name="text">
-               <string>Add</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="3" colspan="2" alignment="Qt::AlignHCenter">
-             <widget class="QLabel" name="label_6">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Уровень</string>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="0" colspan="2">
-             <widget class="QPlainTextEdit" name="edit_press3">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="0" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="button_press3_clear">
-              <property name="text">
-               <string>Clear</string>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="1" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="button_press3_add">
-              <property name="text">
-               <string>Add</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="5">
-             <widget class="Line" name="line_5">
+            <item row="13" column="0" colspan="7">
+             <widget class="Line" name="line_10">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
-            <item row="5" column="0" colspan="5">
-             <widget class="Line" name="line_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+            <item row="14" column="1">
+             <widget class="QPushButton" name="button_pressatm_open">
+              <property name="text">
+               <string>Open</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="2" rowspan="3">
-             <widget class="Line" name="line_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0" colspan="5">
-             <widget class="Line" name="line_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2" rowspan="3">
-             <widget class="Line" name="line_7">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="2" rowspan="3">
-             <widget class="Line" name="line_8">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3" colspan="2">
-             <widget class="QPlainTextEdit" name="edit_temp">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="3" rowspan="3" colspan="2">
-             <widget class="QPlainTextEdit" name="plainTextEdit">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-              <property name="plainText">
-               <string>Руководство
-
-1. Заполните список файлов для обработки в соответсвующих разделах при помощи кнопок &quot;Add&quot;
-2. После заполнения всех разделов станут доступны основные функции программы
-3. &quot;Run&quot; запускает непрерывную периодическую обработку указанных файлов
-4. &quot;Stop&quot; останавливает непрерывную обработку файлов
-5. &quot;Solve&quot; - однократная обработка файлов
-6. &quot;Save&quot; - сохранение таблицы с результатом
-7. Для очистки соответсвующего списка используется кнопка &quot;Clear&quot; </string>
-              </property>
-              <property name="overwriteMode">
-               <bool>false</bool>
-              </property>
-             </widget>
+            <item row="14" column="2" colspan="5">
+             <widget class="QLineEdit" name="edit_pressatm"/>
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="Line" name="line_6">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -435,7 +501,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="0" column="3">
              <widget class="QLineEdit" name="edit_save">
               <property name="font">
                <font>
@@ -447,8 +513,33 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0" colspan="2">
+            <item row="1" column="0" colspan="4">
              <widget class="QTableView" name="table_result"/>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="button_save_dropna">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Save_dropna</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="button_save_split">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Save_split</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -499,6 +590,37 @@
              </widget>
             </item>
            </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Руководство</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEdit">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="plainText">
+             <string>Руководство
+
+1. Заполните список файлов для обработки в соответсвующих разделах при помощи кнопок &quot;Add&quot;
+2. После заполнения всех разделов станут доступны основные функции программы
+3. &quot;Run&quot; запускает непрерывную периодическую обработку указанных файлов
+4. &quot;Stop&quot; останавливает непрерывную обработку файлов
+5. &quot;Solve&quot; - однократная обработка файлов
+6. &quot;Save&quot; - сохранение таблицы с результатом
+7. Для очистки соответсвующего списка используется кнопка &quot;Clear&quot; </string>
+            </property>
+            <property name="overwriteMode">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

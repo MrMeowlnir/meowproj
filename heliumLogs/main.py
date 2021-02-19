@@ -9,6 +9,7 @@ Create full database of experimental data with GUI
 """
 
 import sys
+import os
 from datetime import datetime
 import pandas as pd
 import numpy as np
@@ -85,6 +86,12 @@ class LogFile():
         fname = QFileDialog.getOpenFileName()[0]
         if fname != '':
             self.fnames.append(fname)
+    
+    def AddFolder(self):
+        Folder_Name = QFileDialog.getExistingDirectory()
+        for dirs, folders, files in os.walk(Folder_Name):
+            for file in files: 
+                self.fnames.append(os.path.join(dirs,file))
 
 """ Класс Лог Давления"""
 class Pressure(LogFile):
@@ -120,6 +127,30 @@ class Pressure(LogFile):
         
         return result
 
+class AtmPressure(LogFile):
+    def __init__(self):
+        super().__init__()
+    
+    def GetDataFrame(self):
+        while self.fnames == [] or self.fnames == '':
+            self.set_fnames()
+        
+        names = ["Date/Time", "Atm.Pressure, kPa"]
+        result = pd.DataFrame()
+        for filename in self.fnames:
+            try:
+                xl = pd.ExcelFile(filename)
+                dataframe = xl.parse(xl.sheet_names[0], header=None)
+                dataframe.columns = names
+                dataframe["Date/Time"] = pd.to_datetime(dataframe["Date/Time"],
+                                 format = '%d.%m.%Y %H:%M:%S', 
+                                 exact = False)
+                result = result.append(dataframe, ignore_index = True)          
+            except:
+                pass
+        
+        return result
+
 """ Класс температурного лога"""
 class Temperature(LogFile):
     def __init__(self):
@@ -130,11 +161,17 @@ class Temperature(LogFile):
             self.set_fnames()
         
         
-        names = ["Date/Time", "T1, K", "T2, K", "T3, K", "T4, K", "T5, K", "T6, K", "T7, K","T8, K"]
+        names1 = ["Date/Time", "T1, K", "T2, K", "T3, K", "T4, K", "T5, K", "T6, K", "T7, K","T8, K"]
+        names2 = ["Date/Time", "T_rot1, K", "T_rot2, K"]
         result = pd.DataFrame()
         for filename in self.fnames:
             try:
-                dataframe = pd.read_csv(filename, delimiter='\t', names=names)
+                dataframe = pd.read_csv(filename, delimiter='\t')
+                if len(dataframe.columns) == 9:
+                    dataframe.columns = names1
+                elif len(dataframe.columns) == 3:
+                    dataframe.columns = names2
+                    
                 dataframe["Date/Time"] = pd.to_datetime(dataframe["Date/Time"],
                                  format = '%d.%m.%Y %H:%M:%S', 
                                  exact = False)
@@ -145,7 +182,7 @@ class Temperature(LogFile):
         return result
 
 
-""" Класс температурного лога"""
+""" Класс лога уровня"""
 class Level(LogFile):
     def __init__(self):
         super().__init__()
@@ -181,7 +218,9 @@ class MainWindow(QMainWindow):
         self.log_press1 = Pressure()
         self.log_press2 = Pressure()
         self.log_press3 = Pressure()
+        self.log_atmpress = AtmPressure()
         self.log_temp = Temperature()
+        self.log_temp2 = Temperature()
         self.log_level = Level()
         
     def initUI(self):
@@ -191,18 +230,31 @@ class MainWindow(QMainWindow):
         self.button_press3_add.clicked.connect(self.press3_add)
         self.button_level_add.clicked.connect(self.level_add)
         self.button_temp_add.clicked.connect(self.temp_add)
+        self.button_temp2_add.clicked.connect(self.temp2_add)
+        self.button_pressatm_open.clicked.connect(self.atmpress_open)
         # 'Clear' buttons
         self.button_press1_clear.clicked.connect(self.press1_clear)
         self.button_press2_clear.clicked.connect(self.press2_clear)
         self.button_press3_clear.clicked.connect(self.press3_clear)
         self.button_level_clear.clicked.connect(self.level_clear)
         self.button_temp_clear.clicked.connect(self.temp_clear)
+        self.button_temp2_clear.clicked.connect(self.temp2_clear)
+        
+        # 'AddFolder' buttons
+        self.button_press1_addfolder.clicked.connect(self.press1_addfolder)
+        self.button_press2_addfolder.clicked.connect(self.press2_addfolder)
+        self.button_press3_addfolder.clicked.connect(self.press3_addfolder)
+        self.button_level_addfolder.clicked.connect(self.level_addfolder)
+        self.button_temp_addfolder.clicked.connect(self.temp_addfolder)
+        self.button_temp2_addfolder.clicked.connect(self.temp2_addfolder)
         
         # Run, stop, solve
         self.button_Run.clicked.connect(self.run_clicked)
         self.button_Stop.clicked.connect(self.stop_clicked)
         self.button_Solve.clicked.connect(self.solve_clicked)
         self.button_Save.clicked.connect(self.save_clicked)
+        self.button_save_dropna.clicked.connect(self.save_dropna)
+        self.button_save_split.clicked.connect(self.save_split)
         self.__Log('UI initialized successfully.')
         
     # метод записи отчетов о работе программы в лог
@@ -244,6 +296,31 @@ class MainWindow(QMainWindow):
             self.union.to_excel(fname)
         self.__Log('button_save.clicked')
         
+    def save_dropna(self):
+        self.button_Run.setChecked(False)
+        fname = QFileDialog.getSaveFileName(self, 'Save File', filter='Excel files (*.xlsx)')[0]
+        if '.xlsx' not in fname:
+            fname = fname + '.xlsx'
+        self.edit_save.setText('Saved: ' + fname)
+        if (fname[0] != '.'):
+            self.union.dropna(subset = self.union.columns[:-1]).to_excel(fname)
+        self.__Log('button_save_dropna.clicked')
+    
+    def save_split(self):
+        self.button_Run.setChecked(False)
+        fname = QFileDialog.getSaveFileName(self, 'Save File', filter='Excel files (*.xlsx)')[0]
+        if '.xlsx' not in fname:
+            fname = fname + '.xlsx'
+        self.edit_save.setText('Saved: ' + fname)
+        if (fname[0] != '.'):
+            xl = pd.ExcelWriter(fname, engine = 'xlsxwriter')
+            self.p.to_excel(xl, sheet_name = 'P')
+            self.t.to_excel(xl, sheet_name = 'T')
+            self.t2.to_excel(xl, sheet_name = 'T2')
+            self.l.to_excel(xl, sheet_name = 'L')
+            xl.save()
+        self.__Log('button_save_split.clicked')
+        
     def FillTable(self, Result_Table, tableWidget):
         col_count = len(Result_Table.columns)
         row_count = len(Result_Table.index)
@@ -269,23 +346,55 @@ class MainWindow(QMainWindow):
         p3 = self.log_press3.GetDataFrame()
         self.__Log('len(p3) = ' + str(len(p3)))
         self.progressBar.setValue(30)
+        patm = self.log_atmpress.GetDataFrame()
+        self.__Log('len(patm) = ' + str(len(patm)))
+        self.progressBar.setValue(33)
         t = self.log_temp.GetDataFrame()
         self.__Log('len(t) = ' + str(len(t)))
+        if len(t) > 0:
+            self.t = t
         self.progressBar.setValue(35)
+        t2 = self.log_temp2.GetDataFrame()
+        self.__Log('len(t2) = ' + str(len(t2)))
+        if len(t2) > 0:
+            self.t2 = t2
+        self.progressBar.setValue(38)
         l = self.log_level.GetDataFrame()
         self.__Log('len(l) = ' + str(len(l)))
+        if len(l) > 0:
+            self.l = l
         self.progressBar.setValue(40)
         p1p2 = pd.merge(p1, p2, on="Date/Time", how="outer")
         self.progressBar.setValue(45)
-        p = pd.merge(p1p2, p3, on="Date/Time", how="outer")
+        p1p2p3 = pd.merge(p1p2, p3, on="Date/Time", how="outer")
         self.progressBar.setValue(50)
-        pt = pd.merge(p, t, on="Date/Time", how="outer")
-        self.progressBar.setValue(55)
-        self.union = pd.merge(pt, l, on="Date/Time", how="outer")
-        self.progressBar.setValue(60)
-        cols = self.union.columns.tolist()
+        p = pd.merge(p1p2p3, patm, on="Date/Time", how="outer")
+        self.progressBar.setValue(51)
+        p.sort_values('Date/Time', inplace = True)
+        p.reset_index(drop = True, inplace = True)
+        self.progressBar.setValue(53)
+        
+        cols = p.columns.tolist()
         cols = cols[1:2]+cols[:1]+cols[2:]
-        self.union = self.union[cols]
+        p = p[cols]
+        p.interpolate(inplace = True)
+        self.progressBar.setValue(54)
+        self.__Log(p.columns[4])
+        p.dropna(inplace = True)
+        self.progressBar.setValue(55)
+        for i in p.columns[1:-1]:
+            self.__Log(str(i) + ' (abs)')
+            p[str(i) + ' (abs)'] = p[i] + p[p.columns[4]]
+        p = p.round(3)
+        if len(p) > 0:
+            self.p = p
+        self.progressBar.setValue(56)
+        pt = pd.merge(p, t, on="Date/Time", how="outer")
+        self.progressBar.setValue(57)
+        pt2 = pd.merge(pt, t2, on="Date/Time", how="outer")
+        self.progressBar.setValue(58)
+        self.union = pd.merge(pt2, l, on="Date/Time", how="outer")
+        self.progressBar.setValue(60)
         self.union.sort_values('Date/Time', inplace = True)
         self.progressBar.setValue(70)
         """
@@ -297,10 +406,14 @@ class MainWindow(QMainWindow):
         """
         if len(self.union) > 0:
             self.button_Save.setEnabled(True)
+            self.button_save_dropna.setEnabled(True)
+            self.button_save_split.setEnabled(True)
             model = PandasModel(self.union)
             self.table_result.setModel(model)
         else:
             self.button_Save.setEnabled(False)
+            self.button_save_dropna.setEnabled(False)
+            self.button_save_split.setEnabled(False)
         
         self.progressBar.setValue(100)
         
@@ -329,18 +442,68 @@ class MainWindow(QMainWindow):
         self.fill_edit(self.edit_press3, *self.log_press3.GetFNames())
         self.accessRun()
         self.__Log('press3_add.clicked')
+    
+    def atmpress_open(self):
+        self.log_atmpress.ClearFNames()
+        self.log_atmpress.AddFName()
+        self.edit_pressatm.setText(self.log_atmpress.GetFNames()[0])
+        self.accessRun()
+        self.__Log('pressatm_open.clicked')
         
     def temp_add(self):
         self.log_temp.AddFName()
         self.fill_edit(self.edit_temp, *self.log_temp.GetFNames())
         self.accessRun()
         self.__Log('temp_add.clicked')
+    
+    def temp2_add(self):
+        self.log_temp2.AddFName()
+        self.fill_edit(self.edit_temp2, *self.log_temp2.GetFNames())
+        self.accessRun()
+        self.__Log('temp2_add.clicked')
         
     def level_add(self):
         self.log_level.AddFName()
         self.fill_edit(self.edit_level, *self.log_level.GetFNames())
         self.accessRun()
         self.__Log('level_add.clicked')
+    
+    # слоты кнопок 'Add Folder'
+    def press1_addfolder(self):
+        self.log_press1.AddFolder()
+        self.fill_edit(self.edit_press1, *self.log_press1.GetFNames())
+        self.accessRun()
+        self.__Log('press1_addfolder.clicked')
+        
+    def press2_addfolder(self):
+        self.log_press2.AddFolder()
+        self.fill_edit(self.edit_press2, *self.log_press2.GetFNames())
+        self.accessRun()
+        self.__Log('press2_addfolder.clicked')
+        
+    def press3_addfolder(self):
+        self.log_press3.AddFolder()
+        self.fill_edit(self.edit_press3, *self.log_press3.GetFNames())
+        self.accessRun()
+        self.__Log('press3_addfolder.clicked')
+        
+    def temp_addfolder(self):
+        self.log_temp.AddFolder()
+        self.fill_edit(self.edit_temp, *self.log_temp.GetFNames())
+        self.accessRun()
+        self.__Log('temp_addfolder.clicked')
+    
+    def temp2_addfolder(self):
+        self.log_temp2.AddFolder()
+        self.fill_edit(self.edit_temp2, *self.log_temp2.GetFNames())
+        self.accessRun()
+        self.__Log('temp2_addfolder.clicked')
+        
+    def level_addfolder(self):
+        self.log_level.AddFolder()
+        self.fill_edit(self.edit_level, *self.log_level.GetFNames())
+        self.accessRun()
+        self.__Log('level_addfolder.clicked')
     
     # слоты кнопок 'Clear'
     def press1_clear(self):
@@ -366,6 +529,12 @@ class MainWindow(QMainWindow):
         self.fill_edit(self.edit_temp, *self.log_temp.GetFNames())
         self.accessRun()
         self.__Log('temp_clear.clicked')
+    
+    def temp2_clear(self):
+        self.log_temp2.ClearFNames()
+        self.fill_edit(self.edit_temp2, *self.log_temp2.GetFNames())
+        self.accessRun()
+        self.__Log('temp2_clear.clicked')
         
     def level_clear(self):
         self.log_level.ClearFNames()
@@ -382,7 +551,9 @@ class MainWindow(QMainWindow):
         c = self.log_press3.GetFNames() != []
         d = self.log_temp.GetFNames() != []
         e = self.log_level.GetFNames() != []
-        if a and b and c and d and e:
+        f = self.log_temp2.GetFNames() != []
+        g = self.log_atmpress.GetFNames() != []
+        if a and b and c and d and e and f and g:
             self.button_Run.setEnabled(True)
             self.button_Stop.setEnabled(True)
             self.button_Solve.setEnabled(True)

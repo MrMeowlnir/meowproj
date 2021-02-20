@@ -14,9 +14,9 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import pyqtgraph as pg
-from PyQt5 import uic, QtCore, QtGui
+from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import (QMainWindow, QTableWidgetItem,
-    QFileDialog, QApplication, QComboBox, QLabel)
+    QFileDialog, QApplication)
 
 """ функция склеивания даты и времени"""
 def dateConcat(df):
@@ -27,6 +27,12 @@ def dateConcat(df):
     dataframe.drop(['Time', 'Date'], axis=1, inplace=True)
     return dataframe
 
+
+def replace_float(x):
+    if isinstance(x, str):
+        return float(x.replace(',','.'))
+    else:
+        return x
 
 def fpress(x):
     if 'MPa' in x:
@@ -169,12 +175,16 @@ class Temperature(LogFile):
                 dataframe = pd.read_csv(filename, delimiter='\t')
                 if len(dataframe.columns) == 9:
                     dataframe.columns = names1
+                    
                 elif len(dataframe.columns) == 3:
                     dataframe.columns = names2
+                    
                     
                 dataframe["Date/Time"] = pd.to_datetime(dataframe["Date/Time"],
                                  format = '%d.%m.%Y %H:%M:%S', 
                                  exact = False)
+                for i in dataframe.columns [1:]:
+                    dataframe[i] = dataframe[i].map(lambda x: replace_float(x))
                 result = result.append(dataframe, ignore_index = True)          
             except:
                 pass
@@ -252,10 +262,15 @@ class MainWindow(QMainWindow):
         self.button_Run.clicked.connect(self.run_clicked)
         self.button_Stop.clicked.connect(self.stop_clicked)
         self.button_Solve.clicked.connect(self.solve_clicked)
+        
+        # Save buttons
         self.button_Save.clicked.connect(self.save_clicked)
         self.button_save_dropna.clicked.connect(self.save_dropna)
         self.button_save_split.clicked.connect(self.save_split)
+        self.button_save_slice.clicked.connect(self.save_slice)
         self.__Log('UI initialized successfully.')
+        
+        # Menu 
         
     # метод записи отчетов о работе программы в лог
     def __Log(self, log):
@@ -320,6 +335,79 @@ class MainWindow(QMainWindow):
             self.l.to_excel(xl, sheet_name = 'L')
             xl.save()
         self.__Log('button_save_split.clicked')
+        
+        
+    def save_slice(self):
+        self.button_Run.setChecked(False)
+        self.__Log('button_save_slice.clicked')
+        self.progressBar.setValue(0)
+        try:
+            tmp_time_from = datetime.strptime(self.edit_from.text(), '%d.%m.%Y %H:%M')
+            self.__Log(datetime.strftime(tmp_time_from, '%d.%m.%Y %H:%M'))
+            tmp_time_to = datetime.strptime(self.edit_to.text(), '%d.%m.%Y %H:%M')
+            self.__Log(datetime.strftime(tmp_time_to, '%d.%m.%Y %H:%M'))
+        except:
+            tmp_time_from = 0
+            tmp_time_to = 0
+            self.__Log('Exception')
+            
+        self.progressBar.setValue(10)
+        if (isinstance(tmp_time_from, datetime) and
+                isinstance(tmp_time_to, datetime)):
+            self.__Log('isinctance')
+            time_from = min([tmp_time_from, tmp_time_to])
+            time_to = max([tmp_time_from, tmp_time_to])
+            self.__Log('Min datetime' + datetime.strftime(time_from, '%d.%m.%Y %H:%M'))
+            self.__Log('Max datetime' + datetime.strftime(time_to, '%d.%m.%Y %H:%M'))
+            
+            p_slice = self.p[self.p['Date/Time'] >= time_from].dropna().reset_index(drop = True)
+            p_slice = p_slice[p_slice['Date/Time'] <= time_to].dropna().reset_index(drop = True)
+            self.__Log('len(p_slice) = ' + str(len(p_slice)))
+            t_slice = self.t[self.t['Date/Time'] >= time_from].dropna().reset_index(drop = True)
+            t_slice = t_slice[t_slice['Date/Time'] <= time_to].dropna().reset_index(drop = True)
+            self.__Log('len(t_slice) = ' + str(len(t_slice)))
+            t2_slice = self.t2[self.t2['Date/Time'] >= time_from].dropna().reset_index(drop = True)
+            t2_slice = t2_slice[t2_slice['Date/Time'] <= time_to].dropna().reset_index(drop = True)
+            self.__Log('len(t2_slice) = ' + str(len(t2_slice)))
+            l_slice = self.l[self.l['Date/Time'] >= time_from].dropna().reset_index(drop = True)
+            l_slice = l_slice[l_slice['Date/Time'] <= time_to].dropna().reset_index(drop = True)
+            self.__Log('len(l_slice) = ' + str(len(l_slice)))
+            union_slice = self.union[self.union['Date/Time'] >= time_from].dropna(subset = self.union.columns[:-3]).reset_index(drop = True)
+            union_slice = union_slice[union_slice['Date/Time'] <= time_to].dropna(subset = self.union.columns[:-3]).reset_index(drop = True)
+            self.__Log('len(union_slice) = ' + str(len(union_slice)))
+            self.progressBar.setValue(20)
+            
+            model = PandasModel(union_slice)
+            self.table_slice.setModel(model)
+            self.progressBar.setValue(50)
+            
+            fname = QFileDialog.getSaveFileName(self, 'Save File', filter='Excel files (*.xlsx)')[0]
+            self.progressBar.setValue(55)
+            if '.xlsx' not in fname:
+                fname = fname + '.xlsx'
+            
+            if (fname[0] != '.'):
+                xl = pd.ExcelWriter(fname, engine = 'xlsxwriter')
+                p_slice.to_excel(xl, sheet_name = 'P')
+                self.progressBar.setValue(60)
+                t_slice.to_excel(xl, sheet_name = 'T')
+                self.progressBar.setValue(70)
+                t2_slice.to_excel(xl, sheet_name = 'T2')
+                self.progressBar.setValue(80)
+                l_slice.to_excel(xl, sheet_name = 'L')
+                self.progressBar.setValue(90)
+                union_slice.to_excel(xl, sheet_name = 'Full')
+                self.progressBar.setValue(95)
+                xl.save()
+                self.edit_save_slice.setText('Saved: ' + fname)
+            else:
+                self.edit_save_slice.setText('Wrong Filename: ' + fname)
+        else:
+            self.__Log('NOT isinctance')    
+                
+        self.progressBar.setValue(100)        
+        self.__Log('button_save_slice.done')
+        
         
     def FillTable(self, Result_Table, tableWidget):
         col_count = len(Result_Table.columns)
@@ -408,12 +496,14 @@ class MainWindow(QMainWindow):
             self.button_Save.setEnabled(True)
             self.button_save_dropna.setEnabled(True)
             self.button_save_split.setEnabled(True)
+            self.button_save_slice.setEnabled(True)
             model = PandasModel(self.union)
             self.table_result.setModel(model)
         else:
             self.button_Save.setEnabled(False)
             self.button_save_dropna.setEnabled(False)
             self.button_save_split.setEnabled(False)
+            self.button_save_slice.setEnabled(False)
         
         self.progressBar.setValue(100)
         
